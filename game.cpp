@@ -5,18 +5,7 @@ using namespace std;
 Game::Game()
 {
     this->is_game_over = 0;
-    this->board = (int **)malloc(board_size * sizeof(int *));
-
-    for (int i = 0; i < board_size; i++)
-    {
-        this->board[i] = (int *)malloc(board_size * sizeof(int));
-
-        for (int j = 0; j < board_size; j++)
-        {
-            this->board[i][j] = 0;
-        }
-    }
-
+    this->board = new Board(this->board_size);
     this->setup_ships();
 }
 
@@ -34,18 +23,18 @@ void Game::core(Coordinate *shot)
 
     int was_hit = this->did_it_hit(shot->x, shot->y);
 
-    if (this->board[shot->x][shot->y] == 0 && was_hit)
+    if (this->board->grid[shot->x][shot->y]->state == 0 && was_hit)
     {
-        this->board[shot->x][shot->y] = 1;
+        this->board->grid[shot->x][shot->y]->state = 1;
     }
-    else if (this->board[shot->x][shot->y] == 1 && was_hit)
+    else if (this->board->grid[shot->x][shot->y]->state == 1 && was_hit)
     {
-        this->board[shot->x][shot->y] = 1;
+        this->board->grid[shot->x][shot->y]->state = 1;
     }
     else
     {
 
-        this->board[shot->x][shot->y] = -1;
+        this->board->grid[shot->x][shot->y]->state = -1;
     }
 }
 
@@ -68,15 +57,15 @@ void Game::draw()
         printf(" %2c", 'a' + i);
         for (int j = 0; j < board_size; j++)
         {
-            if (this->board[i][j] == 0)
+            if (this->board->grid[i][j]->state == 0)
             {
                 printf("  ~");
             }
-            else if (this->board[i][j] == 1)
+            else if (this->board->grid[i][j]->state== 1)
             {
                 printf("  X");
             }
-            else if (this->board[i][j] == -1)
+            else if (this->board->grid[i][j]->state== -1)
             {
                 printf(" .");
             }

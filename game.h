@@ -6,7 +6,7 @@
 #include <iostream>
 #include <time.h>
 
-#include "coordinate.h"
+#include "board.h"
 
 class Game
 {
@@ -27,7 +27,7 @@ class Game
     const int number_of_submarines = 5;
 
 private:
-    int **board;
+    Board* board;
     int is_game_over;
     int **carriers;
     int **cruisers;

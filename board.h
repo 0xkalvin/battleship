@@ -12,7 +12,8 @@ class Board
 
 private:
     int size;
-    Coordinate ***state;
+    Coordinate ***grid;
+    friend class Game;
 
 public:
     Board(int size);

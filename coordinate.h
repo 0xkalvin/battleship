@@ -9,7 +9,7 @@ class Coordinate
 {
 
 public:
-    int x, y;
+    int x, y, state;
     Coordinate(int x, int y);
     ~Coordinate();
 };
