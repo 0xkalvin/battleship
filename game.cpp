@@ -2,28 +2,27 @@
 
 Game::Game()
 {
-    this->is_game_over = this->score = 0;
+    this->is_game_over = this->player_to_move = 0;
     this->menu = new Menu();
-    this->board = new Board(this->board_size);
 
-    this->setup_ship(5, 1, CARRIER);
-    this->setup_ship(3, 2, CRUISER);
-    this->setup_ship(1, 5, SUBMARINE);
+    this->init_menu();
+    this->mode = this->menu->get_chosen_mode();
 
-    this->active_ships_coordinates = this->number_of_carriers * 5 +
-                                     this->number_of_cruisers * 3 + this->number_of_submarines;
+    this->board = (Board **)malloc(this->mode * sizeof(Board *));
+    this->score = (int *)malloc(this->mode * sizeof(int));
 
-    this->show_menu();
-
-    for (const auto &p : this->ships)
+    for (int i = 0; i < this->mode; i++)
     {
-        std::cout << *p.second << std::endl;
+        this->board[i] = new Board(this->board_size);
+        this->score[i] = 0;
     }
 }
 
 Game::~Game()
 {
     delete this->board;
+    delete this->menu;
+    delete this->score;
 }
 
 /* Handles the game logic, such as altering the board state based on the user input */
@@ -32,27 +31,35 @@ void Game::core(Coordinate *shot)
     try
     {
 
-        if (this->board->grid[shot->x][shot->y]->state != 0)
+        if (this->board[this->player_to_move]->grid[shot->x][shot->y]->state != 0)
         {
             throw "INPUT::Coordinate was already revealed";
         }
 
-        Coordinate *target_coordinate = this->search_ship_in_coordinate(shot->x, shot->y);
+        Coordinate *target_coordinate = this->board[this->player_to_move]->search_ship_in_coordinate(shot->x, shot->y);
 
-        if (this->board->grid[shot->x][shot->y]->state == 0 && target_coordinate)
+        if (this->board[this->player_to_move]->grid[shot->x][shot->y]->state == 0 && target_coordinate)
         {
-            this->board->grid[shot->x][shot->y]->state = target_coordinate->state;
-            this->score += 10 * target_coordinate->state;
-            this->active_ships_coordinates -= 1;
+            this->board[this->player_to_move]->grid[shot->x][shot->y]->state = target_coordinate->state;
 
-            if (this->active_ships_coordinates == 0)
+            this->score[this->player_to_move] += 10 * target_coordinate->state;
+
+            this->board[this->player_to_move]->active_ships_coordinates -= 1;
+
+            if (this->board[this->player_to_move]->active_ships_coordinates == 0)
             {
                 this->is_game_over = 1;
             }
         }
         else
         {
-            this->board->grid[shot->x][shot->y]->state = EMPTY;
+            this->board[this->player_to_move]->grid[shot->x][shot->y]->state = EMPTY;
+        }
+
+        if (this->mode == 2)
+        {
+
+            this->player_to_move = !this->player_to_move;
         }
     }
     catch (const char *const error)
@@ -62,57 +69,139 @@ void Game::core(Coordinate *shot)
     }
 }
 
-/*  Renders game interface based on its current state */
+/*  Renders game interface based on its mode and current state  */
 void Game::render()
 {
     system("clear");
 
-    std::cout << title << '\n';
+    std::cout << title;
 
-    printf("   ");
-    for (int i = 0; i < board_size; i++)
+    if (this->mode == 2)
     {
-        printf(" %2d", i + 1);
-    }
+        printf("\t     PLAYER 1\t\t\t\t    PLAYER 2\n\n    ");
 
-    printf("\n");
+        for (int i = 0; i < this->board_size; i++)
+        {
+            printf("%2d ", i + 1);
+        }
 
-    for (int i = 0; i < board_size; i++)
-    {
-        printf(" %2c", 'a' + i);
-        for (int j = 0; j < board_size; j++)
+        printf("\t\t   ");
+
+        for (int i = 0; i < this->board_size; i++)
+        {
+            printf("%2d ", i + 1);
+        }
+
+        printf("\n");
+
+        for (int i = 0; i < this->board_size; i++)
         {
 
-            if (this->board->grid[i][j]->state == -1)
+            printf(" %2c", 'a' + i);
+
+            for (int j = 0; j < this->board_size; j++)
             {
-                printf(" %2c", '.');
+
+                if (this->board[0]->grid[i][j]->state == -1)
+                {
+                    printf(" %2c", '.');
+                }
+                else if (this->board[0]->grid[i][j]->state == 0)
+                {
+                    printf(" %2c", '~');
+                }
+                else if (this->board[0]->grid[i][j]->state == 1)
+                {
+                    printf(" %2c", 'S');
+                }
+                else if (this->board[0]->grid[i][j]->state == 2)
+                {
+                    printf(" %2c", 'U');
+                }
+                else if (this->board[0]->grid[i][j]->state == 3)
+                {
+                    printf(" %2c", 'A');
+                }
             }
-            else if (this->board->grid[i][j]->state == 0)
+
+            printf("\t\t%2c", 'a' + i);
+
+            for (int j = 0; j < this->board_size; j++)
             {
-                printf(" %2c", '~');
+
+                if (this->board[1]->grid[i][j]->state == -1)
+                {
+                    printf(" %2c", '.');
+                }
+                else if (this->board[1]->grid[i][j]->state == 0)
+                {
+                    printf(" %2c", '~');
+                }
+                else if (this->board[1]->grid[i][j]->state == 1)
+                {
+                    printf(" %2c", 'S');
+                }
+                else if (this->board[1]->grid[i][j]->state == 2)
+                {
+                    printf(" %2c", 'U');
+                }
+                else if (this->board[1]->grid[i][j]->state == 3)
+                {
+                    printf(" %2c", 'A');
+                }
             }
-            else if (this->board->grid[i][j]->state == 1)
-            {
-                printf(" %2c", 'S');
-            }
-            else if (this->board->grid[i][j]->state == 2)
-            {
-                printf(" %2c", 'U');
-            }
-            else if (this->board->grid[i][j]->state == 3)
-            {
-                printf(" %2c", 'A');
-            }
+
+            printf("\n");
         }
-        printf("\n");
+
+        printf("\t     Score %d\t\t\t\t    Score %d\n\n", this->score[0], this->score[1]);
     }
+    else
+    {
 
-    printf("Score %d \n", this->score);
-}
+        printf("\t     PLAYER 1\n\n    ");
+        for (int i = 0; i < this->board_size; i++)
+        {
+            printf("%2d ", i + 1);
+        }
 
-int Game::get_score()
-{
-    return this->score;
+        printf("\n");
+
+        for (int i = 0; i < this->board_size; i++)
+        {
+
+            printf(" %2c", 'a' + i);
+
+            for (int j = 0; j < this->board_size; j++)
+            {
+
+                if (this->board[0]->grid[i][j]->state == -1)
+                {
+                    printf(" %2c", '.');
+                }
+                else if (this->board[0]->grid[i][j]->state == 0)
+                {
+                    printf(" %2c", '~');
+                }
+                else if (this->board[0]->grid[i][j]->state == 1)
+                {
+                    printf(" %2c", 'S');
+                }
+                else if (this->board[0]->grid[i][j]->state == 2)
+                {
+                    printf(" %2c", 'U');
+                }
+                else if (this->board[0]->grid[i][j]->state == 3)
+                {
+                    printf(" %2c", 'A');
+                }
+            }
+
+            printf("\n");
+        }
+
+        printf("\t     Score %d\n\n", this->score[0]);
+    }
 }
 
 /* Returns game state */
@@ -131,6 +220,10 @@ Coordinate *Game::read_shots_coordinates()
     {
         try
         {
+            if (this->mode == 2)
+            {
+                std::cout << "Player " << this->player_to_move + 1 << " to move " << std::endl;
+            }
             std::cout << "Shot a coordinate (e.g.: e2 )" << '\n';
 
             std::string shot_input;
@@ -160,83 +253,12 @@ Coordinate *Game::read_shots_coordinates()
     }
 }
 
-/*  Checks if a passed coordinate matches any ship position. If so, returns ship coordinate */
-Coordinate *Game::search_ship_in_coordinate(int x, int y)
-{
-    std::string key = std::to_string(x) + std::to_string(y);
-
-    Coordinate *exists = this->ships[key];
-
-    if (exists)
-    {
-        return exists;
-    }
-
-    return NULL;
-}
-
-/*  Initialize a type of ship, setting up its coordinates by size and quantity */
-void Game::setup_ship(int size, int n, State target_state)
-{
-    srand(time(NULL));
-
-    for (int i = 0; i < n; i++)
-    {
-        int is_coordinates_valid = 1;
-
-        do
-        {
-
-            int x = rand() % this->board_size;
-            int y = rand() % this->board_size;
-            int j = 1;
-
-            while (j < size + 1)
-            {
-
-                Coordinate *c = new Coordinate(x + j, y);
-                std::string key = std::to_string(x + j) + std::to_string(y);
-
-                if (this->ships.count(key) || c->x >= 9 || c->y >= 9)
-                {
-                    is_coordinates_valid = 0;
-                }
-                else
-                {
-                    is_coordinates_valid = 1;
-                }
-
-                j++;
-            }
-
-            if (is_coordinates_valid)
-            {
-                j = 1;
-
-                while (j < size + 1)
-                {
-
-                    Coordinate *c = new Coordinate(x + j, y, target_state);
-                    std::string key = std::to_string(x + j) + std::to_string(y);
-
-                    this->ships[key] = c;
-                    j++;
-                }
-            }
-
-        } while (!is_coordinates_valid);
-    }
-}
-
 /*  Shows initial menu and set the game mode */
-void Game::show_menu()
+void Game::init_menu()
 {
     system("clear");
 
     std::cout << title << '\n';
 
     this->menu->render();
-
-    this->mode = this->menu->get_chosen_mode();
-
 }
