@@ -9,8 +9,8 @@ Game::Game()
     this->setup_ship(3, 2, CRUISER);
     this->setup_ship(1, 5, SUBMARINE);
 
-    this->active_ships = this->number_of_carriers +
-                         this->number_of_cruisers + this->number_of_submarines;
+    this->active_ships_coordinates = this->number_of_carriers * 5+
+                         this->number_of_cruisers * 3 + this->number_of_submarines;
 
     for (const auto &p : this->ships)
     {
@@ -40,6 +40,11 @@ void Game::core(Coordinate *shot)
         {
             this->board->grid[shot->x][shot->y]->state = target_coordinate->state;
             this->score += 10 * target_coordinate->state;
+            this->active_ships_coordinates -= 1;
+
+            if(this->active_ships_coordinates == 0){
+                this->is_game_over = 1;
+            }
         }
         else
         {
