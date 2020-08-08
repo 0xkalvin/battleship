@@ -8,6 +8,7 @@
 #include <map>
 
 #include "board.h"
+#include "menu.h"
 
 class Game
 {
@@ -28,8 +29,10 @@ class Game
     const int number_of_submarines = 5;
 
 private:
+    Menu *menu;
     Board* board;
     int is_game_over;
+    int mode;
     int score;
     int active_ships_coordinates;
     std::map<std::string, Coordinate*> ships;
@@ -42,6 +45,7 @@ public:
     Coordinate *read_shots_coordinates();
     int is_over();
     int get_score();
+    void show_menu();
 
     Coordinate* search_ship_in_coordinate(int x, int y);
     void setup_ships();

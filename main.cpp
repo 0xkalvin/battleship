@@ -4,7 +4,7 @@ int main(void)
 {
 
     Game *game = new Game();
-
+    
     while (!game->is_over())
     {
         game->render();
