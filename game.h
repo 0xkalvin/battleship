@@ -31,7 +31,7 @@ private:
     Board* board;
     int is_game_over;
     int score;
-    int active_ships;
+    int active_ships_coordinates;
     std::map<std::string, Coordinate*> ships;
 
 public:
