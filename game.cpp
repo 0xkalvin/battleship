@@ -3,14 +3,17 @@
 Game::Game()
 {
     this->is_game_over = this->score = 0;
+    this->menu = new Menu();
     this->board = new Board(this->board_size);
 
     this->setup_ship(5, 1, CARRIER);
     this->setup_ship(3, 2, CRUISER);
     this->setup_ship(1, 5, SUBMARINE);
 
-    this->active_ships_coordinates = this->number_of_carriers * 5+
-                         this->number_of_cruisers * 3 + this->number_of_submarines;
+    this->active_ships_coordinates = this->number_of_carriers * 5 +
+                                     this->number_of_cruisers * 3 + this->number_of_submarines;
+
+    this->show_menu();
 
     for (const auto &p : this->ships)
     {
@@ -23,7 +26,7 @@ Game::~Game()
     delete this->board;
 }
 
-/*  */
+/* Handles the game logic, such as altering the board state based on the user input */
 void Game::core(Coordinate *shot)
 {
     try
@@ -42,7 +45,8 @@ void Game::core(Coordinate *shot)
             this->score += 10 * target_coordinate->state;
             this->active_ships_coordinates -= 1;
 
-            if(this->active_ships_coordinates == 0){
+            if (this->active_ships_coordinates == 0)
+            {
                 this->is_game_over = 1;
             }
         }
@@ -222,4 +226,17 @@ void Game::setup_ship(int size, int n, State target_state)
 
         } while (!is_coordinates_valid);
     }
+}
+
+/*  Shows initial menu and set the game mode */
+void Game::show_menu()
+{
+    system("clear");
+
+    std::cout << title << '\n';
+
+    this->menu->render();
+
+    this->mode = this->menu->get_chosen_mode();
+
 }
