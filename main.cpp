@@ -7,9 +7,9 @@ int main(void)
 
     while (!game->is_over())
     {
-        game->draw();
+        game->render();
 
-        Coordinate *shot_coordinates = game->input();
+        Coordinate *shot_coordinates = game->read_shots_coordinates();
 
         game->core(shot_coordinates);
     }

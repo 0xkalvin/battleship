@@ -38,8 +38,8 @@ public:
     Game();
     ~Game();
     void core(Coordinate* shot_coordinates);
-    void draw();
-    Coordinate *input();
+    void render();
+    Coordinate *read_shots_coordinates();
     int is_over();
     int get_score();
 

@@ -1,12 +1,10 @@
 #include "game.h"
 
-using namespace std;
-
 Game::Game()
 {
     this->is_game_over = this->score = 0;
     this->board = new Board(this->board_size);
-    
+
     this->setup_ship(5, 1, CARRIER);
     this->setup_ship(3, 2, CRUISER);
     this->setup_ship(1, 5, SUBMARINE);
@@ -16,7 +14,7 @@ Game::Game()
 
     for (const auto &p : this->ships)
     {
-        cout << *p.second << endl; 
+        std::cout << *p.second << std::endl;
     }
 }
 
@@ -51,16 +49,16 @@ void Game::core(Coordinate *shot)
     catch (const char *const error)
 
     {
-        cout << "ERROR::" << error << endl;
+        std::cout << "ERROR::" << error << std::endl;
     }
 }
 
 /*  Renders game interface based on its current state */
-void Game::draw()
+void Game::render()
 {
     system("clear");
 
-    cout << title << '\n';
+    std::cout << title << '\n';
 
     printf("   ");
     for (int i = 0; i < board_size; i++)
@@ -115,7 +113,7 @@ int Game::is_over()
 }
 
 /*  Handles player input to get shot coordinates */
-Coordinate *Game::input()
+Coordinate *Game::read_shots_coordinates()
 {
 
     int is_valid_input = 0;
@@ -124,10 +122,10 @@ Coordinate *Game::input()
     {
         try
         {
-            cout << "Shot a coordinate (e.g.: e2 )" << '\n';
+            std::cout << "Shot a coordinate (e.g.: e2 )" << '\n';
 
-            string shot_input;
-            getline(cin, shot_input);
+            std::string shot_input;
+            getline(std::cin, shot_input);
 
             if (shot_input.length() != 2)
             {
@@ -148,7 +146,7 @@ Coordinate *Game::input()
         }
         catch (const char *const error)
         {
-            cout << "ERROR::" << error << endl;
+            std::cout << "ERROR::" << error << std::endl;
         }
     }
 }
@@ -156,7 +154,7 @@ Coordinate *Game::input()
 /*  Checks if a passed coordinate matches any ship position. If so, returns ship coordinate */
 Coordinate *Game::search_ship_in_coordinate(int x, int y)
 {
-    string key = std::to_string(x) + std::to_string(y);
+    std::string key = std::to_string(x) + std::to_string(y);
 
     Coordinate *exists = this->ships[key];
 
@@ -188,7 +186,7 @@ void Game::setup_ship(int size, int n, State target_state)
             {
 
                 Coordinate *c = new Coordinate(x + j, y);
-                string key = std::to_string(x + j) + std::to_string(y);
+                std::string key = std::to_string(x + j) + std::to_string(y);
 
                 if (this->ships.count(key) || c->x >= 9 || c->y >= 9)
                 {
@@ -210,7 +208,7 @@ void Game::setup_ship(int size, int n, State target_state)
                 {
 
                     Coordinate *c = new Coordinate(x + j, y, target_state);
-                    string key = std::to_string(x + j) + std::to_string(y);
+                    std::string key = std::to_string(x + j) + std::to_string(y);
 
                     this->ships[key] = c;
                     j++;
