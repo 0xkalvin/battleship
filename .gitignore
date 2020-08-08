@@ -33,3 +33,6 @@
 
 # Binary
 battleship
+
+# Vscode
+.vs*

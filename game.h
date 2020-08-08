@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <time.h>
+#include <map>
 
 #include "board.h"
 
@@ -29,9 +30,9 @@ class Game
 private:
     Board* board;
     int is_game_over;
-    int **carriers;
-    int **cruisers;
-    int **submarines;
+    int score;
+    int active_ships;
+    std::map<std::string, Coordinate*> ships;
 
 public:
     Game();
@@ -40,9 +41,11 @@ public:
     void draw();
     Coordinate *input();
     int is_over();
-    
-    int did_it_hit(int x, int y);
+    int get_score();
+
+    Coordinate* search_ship_in_coordinate(int x, int y);
     void setup_ships();
+    void setup_ship(int size, int n, State target_state);
 
 };
 

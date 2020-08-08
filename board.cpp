@@ -13,7 +13,7 @@ Board::Board(int size){
             this->grid[i][j] = (Coordinate *)malloc(this->size  * sizeof(Coordinate));
             this->grid[i][j]->x = i;
             this->grid[i][j]->y = j;
-            this->grid[i][j]->state = 0;
+            this->grid[i][j]->state = UNKNOWN;
         }
     }
 
