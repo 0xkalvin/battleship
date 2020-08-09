@@ -224,7 +224,7 @@ Coordinate *Game::read_shots_coordinates()
             {
                 std::cout << "Player " << this->player_to_move + 1 << " to move " << std::endl;
             }
-            std::cout << "Shot a coordinate (e.g.: e2 )" << '\n';
+            std::cout << "Enter a coordinate (e.g. e2 )" << '\n';
 
             std::string shot_input;
             getline(std::cin, shot_input);
