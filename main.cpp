@@ -14,5 +14,7 @@ int main(void)
         game->core(shot_coordinates);
     }
 
+    game->render_winning_screen();
+
     return 0;
 }

@@ -41,6 +41,7 @@ public:
     Coordinate *read_shots_coordinates();
     int is_over();
     void init_menu();
+    void render_winning_screen();
 
 };
 
