@@ -56,7 +56,7 @@ void Game::core(Coordinate *shot)
             this->board[this->player_to_move]->grid[shot->x][shot->y]->state = EMPTY;
         }
 
-        if (this->mode == 2)
+        if (this->mode == 2 && !this->is_game_over)
         {
 
             this->player_to_move = !this->player_to_move;
@@ -261,4 +261,20 @@ void Game::init_menu()
     std::cout << title << '\n';
 
     this->menu->render();
+}
+
+void Game::render_winning_screen()
+{
+    this->render();
+
+    if (this->mode == 1)
+    {
+        std::cout << std::endl
+                  << "YOU WIN!" << std::endl;
+    }
+    else
+    {
+        std::cout << std::endl
+                  << "PLAYER " << this->player_to_move << " WINS! " << std::endl;
+    }
 }
